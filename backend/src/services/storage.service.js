@@ -1,6 +1,9 @@
 
-var ImageKit = require("imagekit");
-var mongoose = require("mongoose");
+import ImageKit from "imagekit";
+import mongoose from "mongoose";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 var imagekit = new ImageKit({
     publicKey : process.env.IMAGEKIT_PUBLIC_KEY,
@@ -12,7 +15,7 @@ function uploadFile(file) {
     return new Promise((resolve, reject) =>{
         imagekit.upload({
             file:file.buffer,
-            fileName: new mongoose.Types.ObjectId().toString(),
+            fileName: (new mongoose.Types.ObjectId()).toString(),
             folder: "moody-uploads"
         },(error, result)=>{
             if(error){
@@ -23,4 +26,4 @@ function uploadFile(file) {
         })
     })}
 
-    module.exports = uploadFile;
+export default uploadFile;

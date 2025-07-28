@@ -1,10 +1,10 @@
-const express = require('express');
-const songRoutes = require('./routes/song.routes');
+import express from 'express';
+import songRoutes from './routes/song.routes.js';
 
 const app = express();
 app.use(express.json());
 
-app.use('/', songRoutes);
+app.use('/songs', songRoutes);
 
 
-module.exports = app;
+export default app;
