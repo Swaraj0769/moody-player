@@ -1,43 +1,46 @@
 import express from 'express';
+import { upload,getSongs,getSongById ,searchSong} from '../controllers/song.controller.js';
 import multer from 'multer';
-import uploadFile from '../services/storage.service.js';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+
+const storage = multer.memoryStorage();
+const uploadMiddleware = multer({ storage: storage }); 
+
 const router = express.Router();
-import songModel from '../models/song.model.js';
 
-const upload = multer({storage: multer.memoryStorage()});
 
-router.post('/songs',upload.single('audio'),async (req, res) => {
 
-    console.log(req.body);
-    console.log(req.file);
-    const fileData = await uploadFile(req.file);
-    console.log(fileData);
+router.use((req,res,next)=>{
+    const token = req.cookies.token
+
+    if(!token){
+        return res.status(401).json({
+            message: "Unauthorized"
+        })
+    }
+
+    try{
+        const decoded = jwt.verify(token,process.env.JWT_SECRET)
+        next()
+    }catch(err){
+        return res.status(401).json({
+            message: "Unauthorized"
+        })
+    }
     
-   
-    const song = await songModel.create({ 
-        title: req.body.title,
-        artist: req.body.artist,
-        audio: fileData.url,
-        mood: req.body.mood
-    })  
-
-    res.status(201).json(
-        {
-            message: 'Song created successfully',
-            song: song
-        }
-    )
 })
 
-router.get('/songs', async (req, res) => {
-    const {mood } = req.query;
+router.post('/upload', uploadMiddleware.single("chacha") ,upload)
 
-    const songs = await songModel.find({
-        mood: mood
-    });
-    res.status(200).json({
-        message: 'Songs fetched successfully',
-        song: songs});
-})
+router.get('/get-songs',getSongs)
+
+router.get('/get-song/:mama',getSongById)
+
+router.get('/search-songs',searchSong)
+
 
 export default router;

@@ -1,9 +1,9 @@
-
 import ImageKit from "imagekit";
-import mongoose from "mongoose";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 dotenv.config();
+
+console.log(process.env.IMAGEKIT_PUBLIC_KEY)
 
 var imagekit = new ImageKit({
     publicKey : process.env.IMAGEKIT_PUBLIC_KEY,
@@ -11,19 +11,19 @@ var imagekit = new ImageKit({
     urlEndpoint : process.env.IMAGEKIT_URL_ENDPOINT
 });
 
-function uploadFile(file) {
-    return new Promise((resolve, reject) =>{
-        imagekit.upload({
-            file:file.buffer,
-            fileName: (new mongoose.Types.ObjectId()).toString(),
-            folder: "moody-uploads"
-        },(error, result)=>{
-            if(error){
-                reject(error)
-            }else{
-                resolve(result)
-            }
-        })
-    })}
 
-export default uploadFile;
+export function uploadFile(file, fileName) {
+    return new Promise((resolve, reject) => {
+        imagekit.upload({
+            file: file,
+            fileName: "audio-file-" + Date.now() + ".mp3",
+            folder: "/audio-files/"
+        }, function(error, result) {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}

@@ -1,12 +1,26 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const songSchema = new mongoose.Schema({
-    title:String,
-    artist: String,
-    url: String,
-    mood: String
-});
+    title:{
+        type:String,
+        required:true,
+        unique:true,
+    },
+    artist:{
+        required:true,
+        type:String,
+    },
+    poster:{
+        type:String,
+        default:"https://discussions.apple.com/content/attachment/592590040"
+    },
+    audio:{
+        type:String,
+        required:true,
+    }
+})
 
-const song = mongoose.model('song', songSchema);
- 
-export default song;
+const songModel = mongoose.model("song", songSchema);
+
+
+export default songModel;   
